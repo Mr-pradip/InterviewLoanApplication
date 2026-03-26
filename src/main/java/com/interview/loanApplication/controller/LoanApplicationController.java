@@ -12,7 +12,9 @@ import com.interview.loanApplication.service.LoanApplicationService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/applications")
 @RequiredArgsConstructor
@@ -24,6 +26,7 @@ public class LoanApplicationController {
     public ResponseEntity<LoanApplicationResponse> create(
             @Valid @RequestBody LoanApplicationRequest request) {
 
+    	log.info("Received loan application request for user: {}",request.getApplicant().getName());
         return ResponseEntity.ok(service.checkApplication(request));
     }
 }

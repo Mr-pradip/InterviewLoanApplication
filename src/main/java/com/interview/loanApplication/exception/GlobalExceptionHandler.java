@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.interview.loanApplication.dto.responses.ErrorResponse;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -19,6 +22,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex) {
 
+        log.error("error occurred", ex);
         Map<String, String> fieldErrors = new LinkedHashMap<>();
 
         ex.getBindingResult().getFieldErrors()
@@ -38,6 +42,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleInvalidFormat(Exception ex) {
 
+        log.error("error occurred", ex);
         return ResponseEntity.badRequest().body(
                 ErrorResponse.builder()
                         .status(400)

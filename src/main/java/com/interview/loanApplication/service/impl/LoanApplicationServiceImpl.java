@@ -17,6 +17,9 @@ import com.interview.loanApplication.enums.EmploymentType;
 import com.interview.loanApplication.enums.RiskBand;
 import com.interview.loanApplication.service.LoanApplicationService;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class LoanApplicationServiceImpl implements LoanApplicationService {
 
@@ -27,11 +30,15 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     @Override
     public LoanApplicationResponse checkApplication(LoanApplicationRequest request) {
 
+        log.info("Starting loan evaluation");
         UUID id = UUID.randomUUID();
 
         var applicant = request.getApplicant();
         var loan = request.getLoan();
 
+        log.debug("Applicant Details: {}", applicant);
+        log.debug("Loan Details: {}", loan);
+        
         List<String> reasons = new ArrayList<>();
 
         RiskBand riskBand = getRiskBand(applicant.getCreditScore());
@@ -53,12 +60,14 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         LoanApplicationResponse response;
 
         if (!reasons.isEmpty()) {
+            log.info("Loan rejected due to: {}", reasons);
             response = LoanApplicationResponse.builder()
                     .applicationId(id)
                     .status("REJECTED")
                     .rejectionReasons(reasons)
                     .build();
         } else {
+            log.info("Loan approved for amount: {}", loan.getAmount());
             BigDecimal total = emi.multiply(BigDecimal.valueOf(loan.getTenureMonths()));
 
             response = LoanApplicationResponse.builder()
@@ -75,6 +84,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         }
 
         store.put(id, response);
+        log.info("Loan evaluation completed");
         return response;
     }
 
