@@ -1,3 +1,5 @@
+Note:- java 21 is used for this
+
 Application will start at:  http://localhost:8081
 
 API Endpoint: POST (/applications)
